@@ -70,7 +70,6 @@ ggplot(steps.day,
 ```{r calc_mean}
 mean(steps.day$steps)
 median(steps.day$steps)
-
 ```
 
 ### What is the average daily activity pattern?
@@ -162,23 +161,76 @@ dta.filled <- fill.data()
 
 ````
 
-4. Make a histogram of the total number of steps taken each day and Calculate and report the mean and median total number of steps taken per day. Do these values differ from the estimates from the first part of the assignment? What is the impact of imputing missing data on the estimates of the total daily number of steps?
+4. Make a histogram of the total number of steps taken each day and Calculate and report the mean and median total number of steps taken per day. 
 
-```{r hist_comp}
+```{r make_new_hist}
+steps.day.filled <- aggregate(steps ~ date, data=dta.filled, FUN=sum)
+ggplot(steps.day.filled, 
+       aes(x=steps)) + 
+       geom_histogram(binwidth=2500, colour="black", fill="gray") + 
+       labs(x = "Total Number of Steps Per Day", 
+            y = "Frequency (Number of Days)",
+            title = "Total Number of Steps Per Day (including missing values)")
 
 ```
 
-**Are there differences in activity patterns between weekdays and weekends?**
+Mean and median of the filled data set
+
+Calculate the number of steps by day in the filled data set
+```{r steps_day.filled}
+
+steps.day.filled <- aggregate(steps ~ date, data=dta.filled, FUN=sum)
+
+```
+Calculate the mean and the median of the filled data set
+```{r mm_new_data-st}
+
+mean(steps.day.filled$steps)
+median(steps.day.filled$steps)
+
+
+```
+
+**Do these values differ from the estimates from the first part of the assignment? What is the impact of imputing missing data on the estimates of the total daily number of steps?**
+
+> Replacing missing values with the average value for the time period did not change the mean and slightly increased the median.
+
+### Are there differences in activity patterns between weekdays and weekends?
 
 For this part the weekdays() function may be of some help here. Use the dataset with the filled-in missing values for this part.
 
-+ Create a new factor variable in the dataset with two levels -- "weekday" and "weekend" indicating whether a given date is a weekday or weekend day.
+1. Create a new factor variable in the dataset with two levels -- "weekday" and "weekend" indicating whether a given date is a weekday or weekend day.
 
-+ Make a panel plot containing a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all weekday days or weekend days (y-axis). The plot should look something like the following, which was created using simulated data:
++ First add a new variable 'day' to the data set with complete data (dta.filled)
 
-Sample panel plot
+```{r add_wk_var}
+
+dta.filled$day[weekdays(as.Date(dta.filled$date)) %in% c("Saturday", "Sunday")] <- "weekend"
+dta.filled$day[!weekdays(as.Date(dta.filled$date)) %in% c("Saturday", "Sunday")] <- "weekday"
+dta.filled[,"day"] <- as.factor(dta.filled[,"day"]) # Convert the new variable to a factor
+
+```
+
+2. Make a panel plot containing a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all weekday days or weekend days (y-axis). The plot should look something like the following, which was created using simulated data:
+
+```{r plot_steps_accross_days}
+
+steps.days <- aggregate(steps ~ interval + day, data=dta.filled, FUN=mean)
+ggplot(steps.days, 
+       aes(x=interval, y=steps, group=1)) + 
+       geom_line() +
+       facet_wrap(~ day, ncol=1) +
+       labs(x = "Interval", 
+            y = "Number of Steps",
+            title = "Total Number of Steps Per Week / Week-End Day\n(with filled-in missing values)")
+
+```
+
+Sample panel plot removed
 
 Your plot will look different from the one above because you will be using the activity monitor data. Note that the above plot was made using the lattice system but you can make the same version of the plot using any plotting system you choose.
+
+
 
 ### Submitting the Assignment
 
