@@ -132,7 +132,7 @@ Values.
 ```{r dta.fill}
 
 ## Function to generate a data frame where the NA values have been
-# replaced by the mean of the values fo rthat interval
+# replaced by the mean of the values for that interval
 
 fill.data <- function() {
   dta.filled <- dta  # Create a data frame dta.filled to save the data with the missing values filled.
