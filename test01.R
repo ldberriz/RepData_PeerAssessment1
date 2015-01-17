@@ -7,7 +7,7 @@ for (i in (1:nrow(pp))) {
     
     dta[i,"steps"] <- t2
     dta.post <- pp[i,"steps"]
-    ###########
+    ############
     cnt = cnt + 1
     print(paste("pp$interval=",t1,"steps.interval$interval=",t2, pp.dta.pre, pp.dta.post))
   }

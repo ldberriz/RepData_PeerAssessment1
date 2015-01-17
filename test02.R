@@ -1,4 +1,4 @@
-## Function to generate a data frame where the NA values have been
+# Function to generate a data frame where the NA values have been
 # replaced by the mean of the values fo rthat interval
 
 fill.data <- function() {
