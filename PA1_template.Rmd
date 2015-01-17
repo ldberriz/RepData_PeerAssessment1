@@ -59,8 +59,9 @@ steps.day <- aggregate(steps ~ date, data=dta.complete, FUN=sum)
 ggplot(steps.day, 
        aes(x=steps)) + 
        geom_histogram(binwidth=2500, colour="black", fill="gray") + 
-       labs(x = "Total Number of Steps Per Day (excluding missing values)", 
-            y = "Total Number of Steps Per Day")
+       labs(x = "Total Number of Steps Per Day", 
+            y = "Frequency (Number of Days)",
+            title = "Total Number of Steps Per Day (excluding missing values)")
 
 ```
 
@@ -76,7 +77,7 @@ median(steps.day$steps)
 
 1. Make a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)**
 
-+ Create a data frame with the number of steps per interval
++ Create a data frame with the mean number of steps per interval
 
 ```{r cr_interval}
 steps.interval <- aggregate(steps ~ interval, data=dta.complete, FUN=mean)
@@ -86,7 +87,12 @@ steps.interval <- aggregate(steps ~ interval, data=dta.complete, FUN=mean)
 + Do the time series plot
 
 ```{r do_time_Series}
-ggplot(steps.interval, aes(x=interval, y=steps)) + geom_line(stat="identity")
+ggplot(steps.interval, 
+       aes(x=interval, y=steps)) + 
+       geom_line(stat="identity") + 
+       labs(x = "Five-minute Time Period from 0000 to 2355", 
+            y = "Average Number of Steps",
+            title = "Average Number of Steps Per Time Interval (excluding missing values)")
 
 ```
 
@@ -100,7 +106,7 @@ steps.interval$interval[which.max(steps.interval$steps)]
 
 ```
 
-### Imputing missing values
+### Inputing missing values
 
 Note that there are a number of days/intervals where there are missing values (coded as NA). The presence of missing days may introduce bias into some calculations or summaries of the data.
 
@@ -108,20 +114,59 @@ Note that there are a number of days/intervals where there are missing values (c
 
 ``` {r num_mising_vals}
 
+nrow(dta[!complete.cases(dta$steps),])
+```
+
+``` {r num_mising_vals_alt, include=FALSE}
+# This function gives the same answer but we will not include it in the report
 length(which(is.na(dta$steps)))  # Missing values is only for steps
 
-```
+``````
 
 2. Devise a strategy for filling in all of the missing values in the dataset. The strategy does not need to be sophisticated. For example, you could use the mean/median for that day, or the mean for that 5-minute interval, etc.
 
-```{r fill_missing_vals}
-mean(steps.day$steps)
++ Create a data frame **dta.filled** to save the data with the missing values filled. 
++ This will be a copy of the original data frame **dta** that has missing values.
+We will first declare a function that with the code to generate the data frame with the replaced
+Values.
+
+```{r dta.fill}
+
+## Function to generate a data frame where the NA values have been
+# replaced by the mean of the values fo rthat interval
+
+fill.data <- function() {
+  dta.filled <- dta  # Create a data frame dta.filled to save the data with the missing values filled.
+  for (i in (1:nrow(dta.filled)))
+    if (is.na(dta.filled[i,"steps"])) {   # Check the value for steps is missing
+      t1 <- dta.filled[i,"interval"]      # the value of that interval in t1.  Should be between 0 and 2355
+      # Use the index t2 to map into the correct row of the steps.interval data frame that 
+      # has the value of the means for each interval.
+      t2 <- steps.interval[(steps.interval$interval==t1),"steps"]  
+      dta.filled[i,"steps"] <- t2         # Fill the missing data.
+      # print(paste(i, dta.filled[i,"steps"]))  # Debug code
+    }
+  dta.filled  # Return object
+  }
 
 ````
++ Then we will call the function and save the results in the data frame called **data.filled**
++ The missing values will be filled with the average of steps for that time interval.  
++ This data is in the data frame **steps.interval**
 
 3. Create a new dataset that is equal to the original dataset but with the missing data filled in.
 
+```{r do_data.fill}
+
+dta.filled <- fill.data()
+
+````
+
 4. Make a histogram of the total number of steps taken each day and Calculate and report the mean and median total number of steps taken per day. Do these values differ from the estimates from the first part of the assignment? What is the impact of imputing missing data on the estimates of the total daily number of steps?
+
+```{r hist_comp}
+
+```
 
 **Are there differences in activity patterns between weekdays and weekends?**
 
