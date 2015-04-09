@@ -1,7 +1,6 @@
 ---
 title: "RepData_PeerAssessment1"
 author: "LDBerriz"
-date: "Thursday, January 15, 2015"
 output: html_document
 ---
 

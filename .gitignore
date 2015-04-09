@@ -228,3 +228,4 @@ pip-log.txt
 # produced vignettes
 vignettes/*.html
 vignettes/*.pdf
+.Rproj.user
